@@ -91,10 +91,11 @@ docker stop happy_curran
 ![alt text](stop-container.jpg)
 
 ### **2. 重新启动容器并添加 JVM 参数并验证参数是否生效**
+关闭日志消息解析功能：直接禁用 ${jndi:...} 等恶意字符串的解析。
 ```bash
 docker run -d \
   -p 60443:8080 \  # 保持原端口映射
-  -e "JAVA_TOOL_OPTIONS=-Dlog4j2.formatMsgNoLookups=true" \
+  -e "JAVA_TOOL_OPTIONS=-Dlog4j2.formatMsgNoLookups=true" \ 
   --name log4j-patched \  # 可选：指定新容器名称
   vulfocus/log4j2-cve-2021-44228:latest
 ```
