@@ -267,7 +267,7 @@ sessions -c "wget 'http://192.169.85.2/index.php?cmd=ls /tmp' -O /tmp/result && 
 
 至此，dmz的攻击部分结束，下面在靶机上结束抓包，开始分析和检测漏洞：
 
-### 蓝队部分
+### 蓝队部分 
 分析和检测：
 在攻击时靶机抓到的包通过scp发送到windows本机分析：
 
@@ -364,6 +364,13 @@ tcp.flags.syn==1 and tcp.flags.ack==0 and tcp.window_size > 1024
 
 ![端点](./images/端点.png)
 
+从图中可以看出：
+```
+192.168.240.135
+192.170.84.2
+```
+这两个ip地址的流量很多，猜测它们发出的数据包很可能包含对其他内网 ip 的攻击，包含了对192.170.84.3-5。
+
 * IO 图
 
 绘制流量随时间的变化，观察流量突增等异常
@@ -407,3 +414,5 @@ tcp.flags.syn==1 and tcp.flags.ack==0 and tcp.window_size > 1024
 [使用wireshark检测网络攻击](https://www.infosecmatter.com/detecting-network-attacks-with-wireshark/)
 
 [网页版流量分析](https://www.cloudshark.org/)
+
+[evebox(可与suricata结合)](https://evebox.org/simple-ids/)
