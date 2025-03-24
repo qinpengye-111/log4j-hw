@@ -144,6 +144,7 @@ docker run -d --name log4shell \
     # 运行漏洞演示应用（模拟存在漏洞的服务）
     -jar /demo/demo.jar
 ```
+![alt text](start-container.png)
 **效果验证**
 重复攻击步骤，已无法成功 `getshell`
 ![alt text](result1.png)
