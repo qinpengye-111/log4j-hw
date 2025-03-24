@@ -19,7 +19,7 @@
 * 安装 Vulfocus
 * Vulfocus Web 界面启动该靶场。
 
-  ![alt text](images\image.png)
+  ![alt text](.images\image.png)
 
   访问地址`访问地址: 192.168.56.121:36795`
 
