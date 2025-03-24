@@ -110,6 +110,9 @@ docker run -d \
 - 使用 `PoC` 手动测试验证漏洞可用性
 ![alt text](check-availability.jpg)
 
+### **4.缓解绕过**
+
+**仍待续作**
 
 ## 漏洞修复
 
@@ -167,12 +170,13 @@ docker cp ./demo-patched.jar hungry_dhawan:/demo
 ![alt text](repack-demo.png)
 ![alt text](cp-demo-to-container.png)
 
-4. 重启容器内的应用服务
+4. 重启容器
 ```bash
-docker exec -it hungry_dhawan /bin/bash -c "pkill -f 'java -jar /demo/demo.jar'; java -jar /demo/demo.jar &"
+docker restart crazy_gates
 ```
-**出现问题，容器无法重启，多次尝试无果，仍待续作。**
-![alt text](fail-to-restart-container.png)
+![alt text](restart-container-sec.png)
+5. 重复攻击过程，验证修复效果
+![alt text](fix-sec.jpg)
 
 
 
