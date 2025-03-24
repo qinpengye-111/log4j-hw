@@ -51,6 +51,11 @@ docker ps -a
 
 靶机开启tmux进行tcpdump抓包：
 
+```
+container_name="<替换为目标容器名称或ID>"
+docker run --rm --net=container:${container_name} -v ${PWD}/tcpdump/${container_name}:/tcpdump kaazing/tcpdump
+```
+
 ![靶机tmux开启抓包](./images/靶机tmux开启抓包.png)
 
 然后进入kali-attack中进行逐层的靶标攻击：
